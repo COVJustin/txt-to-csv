@@ -1,12 +1,23 @@
-from selenium import webdriver
+rom selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 import time
+import csv
+
+csv_file = 'filtered.csv'
+
+with open(csv_file, 'r') as file:
+    csv_reader = csv.reader(file)
+    first_row = next(csv_reader)
+    first_value = first_row[0]
 
 # Create a new instance of the Chrome driver
 driver = webdriver.Chrome()
 driver.maximize_window()
+driver.get('chrome://settings/')
+driver.execute_script('chrome.settingsPrivate.setDefaultZoom(0.6);')
 
 # Navigate to the login page
 driver.get("https://centralsquare.payaconnect.com/#/login")
@@ -35,12 +46,33 @@ locations = WebDriverWait(driver, 30).until(
 )
 locations.click()
 
+time.sleep(1)
+
 water = WebDriverWait(driver, 30).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "#location_name_view_link_0 > .text-left"))
 )
 water.click()
+time.sleep(1)
 
 transaction_tab = WebDriverWait(driver, 30).until(
     EC.element_to_be_clickable((By.XPATH, "//a[@id='location_transactions_tab']"))
 )
 transaction_tab.click()
+time.sleep(3)
+date = WebDriverWait(driver, 30).until(
+    EC.element_to_be_clickable((By.XPATH, "//button[@id='created_ts_id']"))
+)
+date.click()
+time.sleep(2)
+element = WebDriverWait(driver, 20).until(
+    EC.element_to_be_clickable((By.XPATH, '//div[7]/li/div/label'))
+)
+element.click()
+time.sleep(10)
+order = WebDriverWait(driver, 20).until(
+    EC.element_to_be_clickable((By.XPATH, "//input[@id='filter_locations-transactions_order_num']"))
+)
+order.click()
+order.send_keys(first_value)
+order.send_keys(Keys.ENTER)
+
