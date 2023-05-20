@@ -1,4 +1,4 @@
-rom selenium import webdriver
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -7,11 +7,6 @@ import time
 import csv
 
 csv_file = 'filtered.csv'
-
-with open(csv_file, 'r') as file:
-    csv_reader = csv.reader(file)
-    first_row = next(csv_reader)
-    first_value = first_row[0]
 
 # Create a new instance of the Chrome driver
 driver = webdriver.Chrome()
@@ -52,7 +47,7 @@ water = WebDriverWait(driver, 30).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "#location_name_view_link_0 > .text-left"))
 )
 water.click()
-time.sleep(1)
+time.sleep(3)
 
 transaction_tab = WebDriverWait(driver, 30).until(
     EC.element_to_be_clickable((By.XPATH, "//a[@id='location_transactions_tab']"))
@@ -63,16 +58,56 @@ date = WebDriverWait(driver, 30).until(
     EC.element_to_be_clickable((By.XPATH, "//button[@id='created_ts_id']"))
 )
 date.click()
-time.sleep(2)
+time.sleep(3)
 element = WebDriverWait(driver, 20).until(
     EC.element_to_be_clickable((By.XPATH, '//div[7]/li/div/label'))
 )
 element.click()
 time.sleep(10)
-order = WebDriverWait(driver, 20).until(
-    EC.element_to_be_clickable((By.XPATH, "//input[@id='filter_locations-transactions_order_num']"))
-)
-order.click()
-order.send_keys(first_value)
-order.send_keys(Keys.ENTER)
+
+with open('filtered.csv', 'r') as file:
+    reader = csv.reader(file)
+    for row in reader:
+        data = row[0]
+
+        order = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "//input[@id='filter_locations-transactions_order_num']"))
+        )
+        order.click()
+        order.send_keys(data)
+        order.send_keys(Keys.ENTER)
+        time.sleep(8)
+        receipt = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "//a[@id='locationstransactions_report_receipt_link_0']/div/i"))
+        )
+        receipt.click()
+        time.sleep(2)
+        refundBtn = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[@id='btn_refund_trans_receipt']"))
+        )
+        refundBtn.click()
+
+        description = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "//div[3]/input"))
+        )
+        description.click()
+        description.send_keys("Test environment error")
+        time.sleep(2)
+        final = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "(//button[@type='button'])[14]"))
+        )
+        final.click()
+        time.sleep(3)
+        close = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//div[@id='modal']/div/div/div[3]/button[2]"))
+        )
+        close.click()
+        time.sleep(10)
+
+        order = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "//input[@id='filter_locations-transactions_order_num']"))
+        )
+        order.click()
+        order.clear()
+        time.sleep(5)
 
