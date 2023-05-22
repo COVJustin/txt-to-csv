@@ -41,7 +41,7 @@ locations = WebDriverWait(driver, 30).until(
 )
 locations.click()
 
-time.sleep(1)
+time.sleep(3)
 
 water = WebDriverWait(driver, 30).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "#location_name_view_link_0 > .text-left"))
@@ -53,7 +53,7 @@ transaction_tab = WebDriverWait(driver, 30).until(
     EC.element_to_be_clickable((By.XPATH, "//a[@id='location_transactions_tab']"))
 )
 transaction_tab.click()
-time.sleep(3)
+time.sleep(5)
 date = WebDriverWait(driver, 30).until(
     EC.element_to_be_clickable((By.XPATH, "//button[@id='created_ts_id']"))
 )
